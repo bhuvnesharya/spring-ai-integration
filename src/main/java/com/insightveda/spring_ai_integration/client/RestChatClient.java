@@ -1,29 +1,29 @@
 package com.insightveda.spring_ai_integration.client;
 
-import com.insightveda.spring_ai_integration.model.ChatResponse;
+import com.insightveda.spring_ai_integration.model.CustomChatResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.*;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Service
-public class OpenAiClient implements ChatClient {
+@Component
+public class RestChatClient implements CustomChatClient {
 
     private final String apiKey;
     private final RestTemplate restTemplate;
 
-    public OpenAiClient(RestTemplateBuilder restTemplateBuilder, @Value("${openai.api-key}") String apiKey) {
+    public RestChatClient(RestTemplateBuilder restTemplateBuilder, @Value("${openai.api-key}") String apiKey) {
         this.restTemplate = restTemplateBuilder.build();
         this.apiKey = apiKey;
     }
 
     @Override
-    public ChatResponse getChatResponse(String prompt) {
+    public CustomChatResponse getChatResponse(String prompt) {
         String apiUrl = "https://api.openai.com/v1/chat/completions";
 
         // Build request
@@ -53,9 +53,7 @@ public class OpenAiClient implements ChatClient {
         Map<String, Object> firstChoice = choices.get(0);
         String generatedText = (String) ((Map<String, Object>) firstChoice.get("message")).get("content");
 
-        return new ChatResponse(generatedText);
+        return new CustomChatResponse(generatedText);
     }
 
-
 }
-
